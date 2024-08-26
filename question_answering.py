@@ -8,7 +8,7 @@ model = BartForQuestionAnswering.from_pretrained(
     "valhalla/bart-large-finetuned-squadv1"
 )
 
-api_key = "3df27c0193d6463bb6bea3dc87523471"
+api_key = ***REMOVED***
 query = "machine learning"
 
 
