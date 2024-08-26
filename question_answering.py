@@ -2,15 +2,16 @@ from transformers import AutoTokenizer, BartForQuestionAnswering
 import torch
 from newsapi import NewsApiClient
 from config import *
-import pandas as pd
 
+# insert your own api key and query
+api_key = news_key
+query = "machine learning"
+
+# call models
 tokenizer = AutoTokenizer.from_pretrained("valhalla/bart-large-finetuned-squadv1")
 model = BartForQuestionAnswering.from_pretrained(
     "valhalla/bart-large-finetuned-squadv1"
 )
-
-api_key = news_key
-query = "machine learning"
 
 
 # retrieve news articles
@@ -20,37 +21,49 @@ def fetch_articles(api_key, query, language="en", page_size=5):
     return articles["articles"]
 
 
+# post processing to remove query if exists in output
 def clean_answer(question, answer):
     if answer.startswith(question):
         return answer[len(question) :].strip()
     return answer
 
 
-articles = fetch_articles(api_key, query)
-titles = []
+# generate answers
+def answer_question(api_key, query):
+    responses = []
+    titles = []
 
-for article in articles:
-    if article["content"]:
-        texts = article["content"]
-        titles.append(article["title"])
+    articles = fetch_articles(api_key, query)
 
-print(titles)
+    for article in articles:
+        if article["content"]:
+            titles.append(article["title"])
 
-for i in range(len(titles)):
-    print(titles[i])
+    for i in range(len(titles)):
 
-    question, text = "What companies are mentioned in this sentence?", titles[i]
+        # change query as needed
+        question, text = "What companies are mentioned in this sentence?", titles[i]
 
-    inputs = tokenizer(question, text, return_tensors="pt")
-    with torch.no_grad():
-        outputs = model(**inputs)
+        inputs = tokenizer(question, text, return_tensors="pt")
 
-    answer_start_index = outputs.start_logits.argmax()
-    answer_end_index = outputs.end_logits.argmax()
+        with torch.no_grad():
+            outputs = model(**inputs)
 
-    predict_answer_tokens = inputs.input_ids[
-        0, answer_start_index : answer_end_index + 1
-    ]
-    answer = tokenizer.decode(predict_answer_tokens, skip_special_tokens=True)
+        answer_start_index = outputs.start_logits.argmax()
+        answer_end_index = outputs.end_logits.argmax()
 
-    print(clean_answer(question, answer))
+        predict_answer_tokens = inputs.input_ids[
+            0, answer_start_index : answer_end_index + 1
+        ]
+        answer = tokenizer.decode(predict_answer_tokens, skip_special_tokens=True)
+
+        cleaned_answer = clean_answer(question, answer)
+        responses.append({"title": titles[i], "answer": cleaned_answer})
+
+    return responses
+
+
+answers = answer_question(api_key, query)
+for answer in answers:
+    print(f"Title: {answer['title']}")
+    print(f"Subject: {answer['answer']}")
