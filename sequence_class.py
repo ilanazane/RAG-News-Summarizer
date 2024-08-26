@@ -1,9 +1,8 @@
 from newsapi import NewsApiClient
-from sentence_transformers import SentenceTransformer
-from transformers import BartTokenizer, BartForConditionalGeneration
+from transformers import BartTokenizer, BartForSequenceClassification
 
-api_key = "***REMOVED***"
-query = "Peaches"
+api_key = "3df27c0193d6463bb6bea3dc87523471"
+query = "Artificial Intelligence"
 
 
 # retrieve news articles
@@ -15,12 +14,12 @@ def fetch_articles(api_key, query, language="en", page_size=5):
 
 # load pre-trained BART model
 tokenizer = BartTokenizer.from_pretrained("facebook/bart-large-cnn")
-model = BartForConditionalGeneration.from_pretrained("facebook/bart-large-cnn")
+model = BartForSequenceClassification.from_pretrained("facebook/bart-large-cnn")
 
 
 def summarize_article(article_text):
     inputs = tokenizer.encode(
-        "summarize: " + article_text,
+        "what company is this article about: " + article_text,
         return_tensors="pt",
         max_length=1024,
         truncation=True,
