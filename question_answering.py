@@ -1,6 +1,7 @@
 from transformers import AutoTokenizer, BartForQuestionAnswering
 import torch
 from newsapi import NewsApiClient
+from config import *
 
 
 tokenizer = AutoTokenizer.from_pretrained("valhalla/bart-large-finetuned-squadv1")
@@ -8,7 +9,7 @@ model = BartForQuestionAnswering.from_pretrained(
     "valhalla/bart-large-finetuned-squadv1"
 )
 
-api_key = ***REMOVED***
+api_key = news_key
 query = "machine learning"
 
 

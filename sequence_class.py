@@ -1,7 +1,8 @@
 from newsapi import NewsApiClient
 from transformers import BartTokenizer, BartForSequenceClassification
+from config import *
 
-api_key = ***REMOVED***
+api_key = news_key
 query = "Artificial Intelligence"
 
 
