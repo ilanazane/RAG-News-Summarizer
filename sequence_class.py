@@ -1,7 +1,7 @@
 from newsapi import NewsApiClient
 from transformers import BartTokenizer, BartForSequenceClassification
 from config import *
-import numpy as np
+import pandas as pd
 
 api_key = news_key
 query = "Artificial Intelligence"

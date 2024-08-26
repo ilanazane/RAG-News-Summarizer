@@ -2,8 +2,7 @@ from transformers import AutoTokenizer, BartForQuestionAnswering
 import torch
 from newsapi import NewsApiClient
 from config import *
-import numpy as np
-
+import pandas as pd
 
 tokenizer = AutoTokenizer.from_pretrained("valhalla/bart-large-finetuned-squadv1")
 model = BartForQuestionAnswering.from_pretrained(
